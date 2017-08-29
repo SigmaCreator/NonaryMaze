@@ -13,12 +13,13 @@ fact StartConnectedToEnd { first.goal in first.start.^(doors.destination) }
 fact MaxSize { #first.start.^(doors.destination) <= 9}
 fact MinSize { #first.start.^(doors.destination) >= 9}
 
+-- imples StartConnectedToEnd
 fact AllRoomsAccessible { Room in first.start.*(doors.destination)}
 
 sig Door {dcode: Int, destination: one Room }
 
 fact NoRoomHasShareDoors { all r: Room {  all o: (Room-r) | #(o.doors & r.doors) = 0 } } 
-fact NoRoomHasNoExit { all r: Room | #r.doors  != 0 }
+fact NoRoomHasNoExit { no r: Room | #r.doors  = 0 }
 fact NoDoorLeadsToItsOrigin { no r: Room | r in r.doors.destination  }
 
 sig Player {pcode: Int}
