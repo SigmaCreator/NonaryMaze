@@ -22,10 +22,13 @@ sig Door {dcode: Int, destination: one Room }
 fact NoRoomHasShareDoors { all r: Room {  all o: (Room-r) | #(o.doors & r.doors) = 0 } } 
 fact NoRoomHasNoExit { no r: Room | #r.doors  = 0 }
 fact NoDoorLeadsToItsOrigin { no r: Room | r in r.doors.destination  }
+fact DoorsDontShare { all d1: Door {  all d2: (Door-d1) | d1.dcode != d2.dcode }    }
+
 
 sig Player {pcode: Int}
-
 fact NumPlayers { #Player = 9}
+
+fact PlayersDontShare { all p1: Player {  all p2: (Player-p1) | p1.pcode != p2.pcode }    }
 
 -- Every Player starts at the beginning
 fact PlayersStartAtBeginning { first.start.occupants =  Player}
@@ -74,6 +77,6 @@ assert impossible { Room not in first.start.^(doors.destination)  }
 --check impossible for 15
 
 assert Valid { last.goal.occupants = Player }
-run { last.goal.occupants = Player }  for 15
+run { last.goal.occupants = Player }  for 9
 
 
