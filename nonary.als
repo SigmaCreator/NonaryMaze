@@ -1,5 +1,5 @@
 open util/ordering[Maze] as ord
-open  util/natural as nat
+open util/natural as nat
 
 let Two = nat/add[nat/One, nat/One]
 --let Three = nat/add[Two, nat/One]
@@ -22,9 +22,9 @@ sig Door {dcode : Natural, destination : one Room }{
 	lte[dcode, Nine]
 }
 
-sig Room {doors : set Door,  occupants : set Player}
+sig Room {doors : set Door, occupants : set Player}
 
-sig Maze {rooms : set Room,  start, goal : one Room}{
+sig Maze {rooms : set Room, start, goal : one Room}{
 
 	-- The starting room is not the goal room
 	start != goal
@@ -35,58 +35,62 @@ sig Maze {rooms : set Room,  start, goal : one Room}{
 	-- Every room is part of the maze
 	rooms = Room
 
-	-- No two rooms share a door
-	all r : rooms { all s : (rooms - r) | #(r.doors & s.doors) = 0}
-
-	-- No room leads back to itself
-	no r : rooms | r in r.^(doors.destination)
-
-	-- No room leads to a dead end / no cul-de-sac
+	-- No room leads to a dead end / No cul-de-sac
 	no r : rooms - goal | #r.doors = 0
 }
 
--- There are 9 players
-fact NPlayers { #Player = 9 }
 
--- There are 9 doors
-fact NDoors { #Door = 9 }
+
+-- Every player starts at the starting room
+fact Initialization { first.start.occupants = Player }
+
+-- Every player exists in one place at a time
+fact NoQuantumPlayers { all p : Player { one r : Room | p in r.occupants  } }
+
+-- Every door is in a room
+fact NoOutsideDoors { all d : Door { one r : Room | d in r.doors }  }
+
+
+
+
+-- No two rooms share a door
+fact NoSharedDoors { all r : Room { all s : (Room - r) | #(r.doors & s.doors) = 0}}
+
+-- No room leads back to itself
+fact NoReturn { no r : Room | r in r.^(doors.destination) }
 
 -- No two players share the same number
-fact UniquePlayerCodes { all p1: Player { all p2: (Player-p1) | p1.pcode != p2.pcode } }
+fact UniquePlayerCodes { all p1 : Player { all p2 : (Player-p1) | p1.pcode != p2.pcode } }
 
 -- No two doors share the same number
 fact UniqueDoors { all d1: Door {  all d2: (Door-d1) | d1.dcode != d2.dcode } }
 
--- Every player starts at the starting room
-fact Initialization { first.start.occupants =  Player}
-
 -- Every room is accessible
 fact AccessibleRooms { Room in first.start.*(doors.destination) }
 
--- Every door is in a room
-fact NoOutsideDoors { all d: Door { one r: Room | d in r.doors }  }
 
--- Every player exists in one place at a time
-fact NoQuantumPlayers { all p: Player { one r: Room | p in r.occupants  } }
+
 
 -- The room with the 9 Door has no other doors
-fact Room9 {
-	all r : Room | { 
-		one d : r.doors | 
-			d.dcode = Nine => 
-				#r.doors = 1
-			else
-				#r.doors != 0
-} }
+--fact Room9 {
+--	all r : Room | { 
+--		one d : r.doors | 
+--			d.dcode = Nine => 
+--				#r.doors = 1
+--			else
+--				#r.doors != 0
+--} }
 
 -- Only the 9 Door leads to the goal room
-fact Door9 { 
-	all d : Door | 
-		d.dcode = Nine => 
-			d.destination = first.goal 
-		else 
-			d.destination in Room - first.goal 
-}
+--fact Door9 { 
+--	all d : Door | 
+--		d.dcode = Nine => 
+--			d.destination = first.goal 
+--		else 
+--			d.destination in Room - first.goal 
+--}
+
+--fact { one d : Door | d.destination = first.goal }
 
 -- Modulo operation : r = a - n * (a/n)
 fun Remainder [a : Natural, n : Natural] : Natural { 
@@ -129,4 +133,4 @@ fact Transition {
 
 
 assert Valid { last.goal.occupants != Player }
-run { }  for 11 Natural, 9 Player, 9 Door, 5 Room, 12 Maze
+run { }  for 11 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 12 Maze
