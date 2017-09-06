@@ -59,15 +59,15 @@ sig Maze {rooms : set Room, start, goal : one Room}{
 							  else
 								d.destination in rooms - goal
 	}
+
+	-- no quantum players
+	 all p : Player { one r : Room | p in r.occupants  } 
 }
 
 
 
 -- Every player starts at the starting room
 fact Initialization { first.start.occupants = Player }
-
--- Every player exists in one place at a time
-fact NoQuantumPlayers { all p : Player { one r : Room | p in r.occupants  } }
 
 -- Every door is in a room
 fact NoOutsideDoors { all d : Door { one r : Room | d in r.doors }  }
@@ -91,8 +91,8 @@ fact AccessibleRooms { Room in first.start.*(doors.destination) }
 fact SameGoal { all m : Maze | first.start = m.start and first.goal = m.goal }
 
 -- Every door set with the same destination has digital root equals to 9
-fact EveryoneLeaves { all r : Door.destination { some d : Door | r = d.destination => 
-							DigitalRoot[d.dcode] = Nine }	}
+--fact EveryoneLeaves { all r : Door.destination { some d : Door | r = d.destination => 
+--							DigitalRoot[d.dcode] = Nine }	}
 
 -- Sum of elements in a set of natural numbers
 fun SetSum[nums : set Natural] : lone Natural {
@@ -115,27 +115,23 @@ fun DigitalRoot [ids : set Natural] : Natural {
 		NinesOut[SetSum[ids], Nine]
 }
 
---pred TraverseDoor [from, to : set Room] {
---	some p : from.occupants | {
---		one d : from.doors {
---			( DigitalRoot[p.pcode] = d.dcode) => {
---				from.occupants = from.occupants - p
---				to.occupants = to.occupants + p
---			}
---		}
---	}	
---}
+pred TraverseDoor [from, to : set Room, p: set Player] {
+	p in from.occupants =>		
+	{
+		from.occupants = from.occupants - p
+		to.occupants = to.occupants + p
+			
+	}
+		
+}
 
-
-
-
---fact Transition {
---	all m : Maze, m' : m.next {
---		#(m.goal.occupants) = 0 => {
---			some r : m.rooms { some nr : m'.rooms  |  nr in r.doors.destination =>  nr.occupants = r.occupants }
---		}
---	}
---}
+fact Transition {
+	all m : Maze - last, m' : m.next {
+		 {
+			some r : m.rooms { some nr : m'.rooms  |  nr in r.doors.destination => TraverseDoor[r, nr, r.occupants] }
+		}
+	}
+}
 
 
 assert Valid { last.goal.occupants != Player }
