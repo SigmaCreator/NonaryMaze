@@ -11,11 +11,11 @@ let Eight = nat/add[Seven, nat/One]
 let Nine = nat/add[Eight, nat/One]
 let Ten = nat/add[Nine, nat/One]
 
-sig SM {ids: set Natural, thing : Natural} {
-	all n : ids | lte[n,Nine] and gt[n,nat/Zero]
-	#ids >= 3 and #ids <= 5
-	thing = DigitalRoot[ids]
-}
+--sig SM {ids: set Natural, thing : Natural} {
+--	all n : ids | lte[n,Nine] and gt[n,nat/Zero]
+--	#ids >= 3 and #ids <= 5
+--	thing = DigitalRoot[ids]
+--}
 	
 sig Player {pcode : Natural}{
 	-- Player code is a number in 1~9
@@ -91,7 +91,8 @@ fact AccessibleRooms { Room in first.start.*(doors.destination) }
 fact SameGoal { all m : Maze | first.start = m.start and first.goal = m.goal }
 
 -- Every door set with the same destination has digital root equals to 9
--- fact EveryoneLeaves {  }
+fact EveryoneLeaves { all r : Door.destination { some d : Door | r = d.destination => 
+							DigitalRoot[d.dcode] = Nine }	}
 
 -- Sum of elements in a set of natural numbers
 fun SetSum[nums : set Natural] : lone Natural {
@@ -140,4 +141,4 @@ fun DigitalRoot [ids : set Natural] : Natural {
 assert Valid { last.goal.occupants != Player }
 
 
-run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 12 Maze, exactly 1 SM
+run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 12 Maze
