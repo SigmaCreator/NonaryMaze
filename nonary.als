@@ -14,12 +14,9 @@ let Ten = nat/add[Nine, nat/One]
 sig SM {ids: set Natural, thing : Natural} {
 	all n : ids | lte[n,Nine] and gt[n,nat/Zero]
 	#ids >= 3 and #ids <= 5
-	--thing = NatDigitalRoot[ids]
-	thing = NatDigitalRoot[ids]
+	thing = DigitalRoot[ids]
 }
 	
-
-
 sig Player {pcode : Natural}{
 	-- Player code is a number in 1~9
 	gte[pcode, nat/One]
@@ -54,8 +51,9 @@ sig Maze {rooms : set Room, start, goal : one Room}{
 	one r : rooms | #r.doors = 1
 
 	-- The digital root of the doors in a room is 9
-	all r : rooms | NatDigitalRoot[r.doors.dcode] = Nine
+	-- all r : rooms | NatDigitalRoot[r.doors.dcode] = Nine
 
+	-- The 9 door is the only one to lead to the goal room
 	all r : rooms | { all d : r.doors | d.dcode = Nine => 
 								d.destination = goal 
 							  else
@@ -92,47 +90,36 @@ fact AccessibleRooms { Room in first.start.*(doors.destination) }
 -- The starting room and the goal remain the same through maze configurations
 fact SameGoal { all m : Maze | first.start = m.start and first.goal = m.goal }
 
-
--- The room with the 9 Door has no other doors
---fact Room9 {
---	all r : Room | { 
---		one d : r.doors | 
---			d.dcode = Nine => 
---				#r.doors = 1
---			else
---				#r.doors != 0
---} }
-
--- Only the 9 Door leads to the goal room
-
-
--- Modulo operation : r = a - n * (a/n)
-fun Remainder [a : Natural, n : Natural] : Natural { 
-	lt[a,n] =>
-		a
-	else
-		Remainder[nat/sub[a,Nine],Nine]
-}
+-- Every door set with the same destination has digital root equals to 9
+-- fact EveryoneLeaves {  }
 
 -- Sum of elements in a set of natural numbers
 fun SetSum[nums : set Natural] : lone Natural {
-    { n : Natural | #nat/prevs[n] = (sum x : nums | #nat/prevs[x]) }
+    { n : Natural | #nat/prevs[n] = ( sum x : nums | #nat/prevs[x] ) }
+}
+
+-- Nines Out Operation
+fun NinesOut [a : Natural, n : Natural] : Natural { 
+	lt[a,n] =>
+		a
+	else
+		NinesOut[nat/sub[a,Nine],Nine]
 }
 
 -- Digital Root
-fun NatDigitalRoot [ids : set Natural] : Natural { 
-	Remainder[SetSum[ids], Nine] = nat/Zero => 
+fun DigitalRoot [ids : set Natural] : Natural { 
+	NinesOut[SetSum[ids], Nine] = nat/Zero => 
 		Nine
 	else 
-		Remainder[SetSum[ids], Nine]
+		NinesOut[SetSum[ids], Nine]
 }
 
---pred TraverseDoor [from, from': set Room] {
+--pred TraverseDoor [from, to : set Room] {
 --	some p : from.occupants | {
 --		one d : from.doors {
---			( NatDigitalRoot[p.pcode] = d.dcode) => {
---			d.destination.occupants = d.destination.occupants + p
---				from'.occupants = from.occupants - p
+--			( DigitalRoot[p.pcode] = d.dcode) => {
+--				from.occupants = from.occupants - p
+--				to.occupants = to.occupants + p
 --			}
 --		}
 --	}	
@@ -142,9 +129,9 @@ fun NatDigitalRoot [ids : set Natural] : Natural {
 
 
 --fact Transition {
---	all m: Maze, m': m.next {
---		first.goal.occupants != Player => {
---			one r : m.rooms { one nr : m'.rooms  |  r = nr =>  TraverseDoor[r, nr] }
+--	all m : Maze, m' : m.next {
+--		#(m.goal.occupants) = 0 => {
+--			some r : m.rooms { some nr : m'.rooms  |  nr in r.doors.destination =>  nr.occupants = r.occupants }
 --		}
 --	}
 --}
