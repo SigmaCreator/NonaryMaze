@@ -11,6 +11,8 @@ let Eight = nat/add[Seven, nat/One]
 let Nine = nat/add[Eight, nat/One]
 let Ten = nat/add[Nine, nat/One]
 
+sig SM {t : Natural}
+
 --sig SM {ids: set Natural, thing : Natural} {
 --	all n : ids | lte[n,Nine] and gt[n,nat/Zero]
 --	#ids >= 3 and #ids <= 5
@@ -29,9 +31,9 @@ sig Door {dcode : Natural, destination : one Room }{
 	lte[dcode, Nine]
 }
 
-sig Room {doors : set Door, occupants : set Player}
+sig Room {doors : set Door}
 
-sig Maze {rooms : set Room, start, goal : one Room}{
+sig Maze {rooms : set Room, start, goal : one Room, occupies : Player-> one Room}{
 
 	-- The starting room is not the goal room
 	start != goal
@@ -60,14 +62,11 @@ sig Maze {rooms : set Room, start, goal : one Room}{
 								d.destination in rooms - goal
 	}
 
-	-- no quantum players
-	 all p : Player { one r : Room | p in r.occupants  } 
+	-- No quantum players
 }
 
-
-
 -- Every player starts at the starting room
-fact Initialization { first.start.occupants = Player }
+fact Initialization { first.occupies = Player->first.start }
 
 -- Every door is in a room
 fact NoOutsideDoors { all d : Door { one r : Room | d in r.doors }  }
@@ -94,6 +93,11 @@ fact SameGoal { all m : Maze | first.start = m.start and first.goal = m.goal }
 --fact EveryoneLeaves { all r : Door.destination { some d : Door | r = d.destination => 
 --							DigitalRoot[d.dcode] = Nine }	}
 
+-- Get player location
+fun where [ m : Maze , p : Player ] : one Room {
+	p.(m.occupies)
+}
+
 -- Sum of elements in a set of natural numbers
 fun SetSum[nums : set Natural] : lone Natural {
     { n : Natural | #nat/prevs[n] = ( sum x : nums | #nat/prevs[x] ) }
@@ -115,26 +119,39 @@ fun DigitalRoot [ids : set Natural] : Natural {
 		NinesOut[SetSum[ids], Nine]
 }
 
-pred TraverseDoor [from, to : set Room, p: set Player] {
-	p in from.occupants =>		
-	{
-		from.occupants = from.occupants - p
-		to.occupants = to.occupants + p
-			
-	}
-		
+pred TraverseDoor [m, m' : Maze, to : Room, p : Player] {
+	m'.occupies = m.occupies ++ (p->to) 
 }
+
+--fact { all m : Maze - last | { some r : m.rooms | { some r' : m.next.rooms | r = r' } } }
+
 
 fact Transition {
-	all m : Maze - last, m' : m.next {
-		 {
-			some r : m.rooms { some nr : m'.rooms  |  nr in r.doors.destination => TraverseDoor[r, nr, r.occupants] }
-		}
+	all m : Maze, m' : m.next { 
+		one r : m.rooms { 
+			one nr : r.doors.destination {
+				some p : Player {
+				-- #p >= 3
+				-- There must be at least 1 player in the room
+				where[m,p] = r 
+				-- The destination must not be the current room
+				r != nr
+				-- The next room must be accessible from the current room
+				-- p.pcode = Two
+				-- The players must be at the destination
+				TraverseDoor[m,m',nr,p] 
+				}
+			}
+		 }
 	}
 }
 
 
-assert Valid { last.goal.occupants != Player }
 
+--assert Valid { last.goal.occupants != Player }
 
-run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 12 Maze
+pred AllStart { first.occupies = Player->first.start }
+
+-- check AllStart {} for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 3 Maze, 1 SM
+
+run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 10 Maze, 1 SM
