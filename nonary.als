@@ -11,13 +11,11 @@ let Eight = nat/add[Seven, nat/One]
 let Nine = nat/add[Eight, nat/One]
 let Ten = nat/add[Nine, nat/One]
 
-sig SM {t : Natural}
 
---sig SM {ids: set Natural, thing : Natural} {
---	all n : ids | lte[n,Nine] and gt[n,nat/Zero]
---	#ids >= 3 and #ids <= 5
---	thing = DigitalRoot[ids]
---}
+sig Test { m : Maze , testers : one Player , roomz : one Room } { 
+	roomz = where[m,testers]
+}
+
 	
 sig Player {pcode : Natural}{
 	-- Player code is a number in 1~9
@@ -91,12 +89,15 @@ fact SameGoal { all m : Maze | first.start = m.start and first.goal = m.goal }
 
 -- Every door set with the same destination has digital root equals to 9
 --fact EveryoneLeaves { all r : Door.destination { some d : Door | r = d.destination => 
---							DigitalRoot[d.dcode] = Nine }	}
+--							DigitalRoot[d.dcode] = Nine }	
 
 -- Get player location
 fun where [ m : Maze , p : Player ] : one Room {
 	p.(m.occupies)
 }
+
+	
+
 
 -- Sum of elements in a set of natural numbers
 fun SetSum[nums : set Natural] : lone Natural {
@@ -125,24 +126,29 @@ pred TraverseDoor [m, m' : Maze, to : Room, p : Player] {
 
 --fact { all m : Maze - last | { some r : m.rooms | { some r' : m.next.rooms | r = r' } } }
 
+pred AdmissionExam [m, m' : Maze] {
+	one r : m.rooms { 
+		one nr : r.doors.destination {
+			some p : Player {
+			 #p >= 2
+			-- There must be at least 1 player in the room
+			all p' : p { where[m,p'] = r } 
+			-- The destination must not be the current room
+			r != nr
+			-- The next room must be accessible from the current room
+			--p.pcode = Two
+			-- The players must be at the destination
+			TraverseDoor[m,m',nr,p] 
+			}
+		}
+	 }
+
+}
 
 fact Transition {
 	all m : Maze, m' : m.next { 
-		one r : m.rooms { 
-			one nr : r.doors.destination {
-				some p : Player {
-				-- #p >= 3
-				-- There must be at least 1 player in the room
-				where[m,p] = r 
-				-- The destination must not be the current room
-				r != nr
-				-- The next room must be accessible from the current room
-				-- p.pcode = Two
-				-- The players must be at the destination
-				TraverseDoor[m,m',nr,p] 
-				}
-			}
-		 }
+	 AdmissionExam[m, m'] => m'.occupies = m'.occupies  else
+			    m'.occupies = m.occupies 
 	}
 }
 
@@ -154,4 +160,4 @@ pred AllStart { first.occupies = Player->first.start }
 
 -- check AllStart {} for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 3 Maze, 1 SM
 
-run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 10 Maze, 1 SM
+run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 2 Maze, 1 Test
