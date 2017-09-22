@@ -1,0 +1,11 @@
+Observações sobre diagrama UML (versão em 22/09/2017):
+- Qual editor foi utilizado?
+- Em termos de documentação, é importante colocar as cardinalidades nos relacionamentos.
+- Pesquisar como as restrições que estão (ou estarão) no modelo Alloy podem ser descritas em OCL junto ao diagrama UML de classes.
+- Se o relacionamento for bidirecional, a seta deve identificar o fato. Por exemplo, entre GameController e Player, entre Door e Room.
+- Alguns relacionamentos não parecem fazer sentido:
+-- De MazeFactory para GameController. No Unity, todos precisam ter uma referência para o GameController?
+-- De MazeFactory para Door, de MazeFactory para Player, de MazeFactory para Room. Realmente ela tem uma associação ou seria apenas uma dependência (seta tracejada) pois para criar o objeto Maze ela utiliza as demais classes? Lembrar a diferença semântica entre associação (seta contínua) e dependência (seta tracejada).
+- Alguns relacionamentos estão invertidos. Por exemplo, os relacionamentos 1 para muitos entre Maze e Room, entre Maze e Player, entre Maze e Door.
+- Algumas questões sobre repetição de informações:
+-- Porquê a coleção de Player aparece tanto dentro de Room quanto dentro de Maze? Se Maze tem a coleção de Door, então já tem-se a mesma informação de maneira indireta. É realmente necessário repetir?
