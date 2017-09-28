@@ -10,12 +10,6 @@ let Seven = nat/add[Six, nat/One]
 let Eight = nat/add[Seven, nat/One]
 let Nine = nat/add[Eight, nat/One]
 let Ten = nat/add[Nine, nat/One]
-
-
-sig Test { m : Maze , testers : one Player , roomz : one Room } { 
-	roomz = where[m,testers]
-}
-
 	
 sig Player {pcode : Natural}{
 	-- Player code is a number in 1~9
@@ -29,7 +23,7 @@ sig Door {dcode : Natural, destination : one Room }{
 	lte[dcode, Nine]
 }
 
-sig Room {doors : set Door}
+sig Room {doors : set Door, entrances : set Door}
 
 sig Maze {rooms : set Room, start, goal : one Room, occupies : Player-> one Room}{
 
@@ -51,16 +45,16 @@ sig Maze {rooms : set Room, start, goal : one Room, occupies : Player-> one Room
 	one r : rooms | #r.doors = 1
 
 	-- The digital root of the doors in a room is 9
-	-- all r : rooms | NatDigitalRoot[r.doors.dcode] = Nine
+	-- all r : rooms | DigitalRoot[r.doors.dcode] = Nine
 
 	-- The 9 door is the only one to lead to the goal room
-	all r : rooms | { all d : r.doors | d.dcode = Nine => 
-								d.destination = goal 
-							  else
-								d.destination in rooms - goal
+	all r : rooms | { 
+		all d : r.doors | 
+			d.dcode = Nine => 
+				d.destination = goal 
+			else
+				d.destination in rooms - goal
 	}
-
-	-- No quantum players
 }
 
 -- Every player starts at the starting room
@@ -88,16 +82,21 @@ fact AccessibleRooms { Room in first.start.*(doors.destination) }
 fact SameGoal { all m : Maze | first.start = m.start and first.goal = m.goal }
 
 -- Every door set with the same destination has digital root equals to 9
---fact EveryoneLeaves { all r : Door.destination { some d : Door | r = d.destination => 
---							DigitalRoot[d.dcode] = Nine }	
+--fact EveryoneLeaves { all r : Door.destination - first.goal { some d : Door | d in r.doors and r = d.destination => DigitalRoot[d.dcode] = Nine } }	
+
+-- The starting room has no entrance (How did they get in?)
+fact NoMainEntrance { one r : first.start | #r.entrances = 0 }
+
+-- Every door is one of its destination entrances
+-- fact NoQuantumEntrances { all d : Door | d in d.destination.entrances }
+
+-- No room has its entrances leading somewhere else
+-- fact NoFakeEntrance{ no r : Room | all d : r.entrances | d.destination != r } 
 
 -- Get player location
 fun where [ m : Maze , p : Player ] : one Room {
 	p.(m.occupies)
 }
-
-	
-
 
 -- Sum of elements in a set of natural numbers
 fun SetSum[nums : set Natural] : lone Natural {
@@ -124,31 +123,39 @@ pred TraverseDoor [m, m' : Maze, to : Room, p : Player] {
 	m'.occupies = m.occupies ++ (p->to) 
 }
 
---fact { all m : Maze - last | { some r : m.rooms | { some r' : m.next.rooms | r = r' } } }
-
 pred AdmissionExam [m, m' : Maze] {
+
+	-- Choose a room
 	one r : m.rooms { 
-		one nr : r.doors.destination {
+
+		-- Choose a door
+		one d : r.doors {
+
+			-- Choose a group of players
 			some p : Player {
-			 #p >= 2
-			-- There must be at least 1 player in the room
-			all p' : p { where[m,p'] = r } 
-			-- The destination must not be the current room
-			r != nr
-			-- The next room must be accessible from the current room
-			--p.pcode = Two
-			-- The players must be at the destination
-			TraverseDoor[m,m',nr,p] 
+
+				-- At least m and at most n players can pass through the door
+				#p >= 1
+
+				-- There must be at least 1 player in the room
+				all p' : p { where[m,p'] = r } 
+
+				-- The door-opening requirement must be fulfilled
+		 		-- DigitalRoot[p.pcode] = d.dcode // WORKS
+
+				-- The players must be at the destination
+				TraverseDoor[m,m',d.destination,p] 
 			}
 		}
-	 }
-
+	}
 }
 
 fact Transition {
 	all m : Maze, m' : m.next { 
-	 AdmissionExam[m, m'] => m'.occupies = m'.occupies  else
-			    m'.occupies = m.occupies 
+	 AdmissionExam[m, m'] => 
+			#m'.occupies != 0 
+ 	else
+			m'.occupies = m.occupies 
 	}
 }
 
@@ -160,4 +167,4 @@ pred AllStart { first.occupies = Player->first.start }
 
 -- check AllStart {} for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 3 Maze, 1 SM
 
-run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 2 Maze, 1 Test
+run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 30 Maze
