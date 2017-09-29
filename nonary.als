@@ -63,7 +63,7 @@ sig Maze {rooms : set Room, start, goal : one Room, occupies : Player-> one Room
 fact Initialization { first.occupies = Player->first.start }
 
 -- Every door is in a room
-fact NoOutsideDoors { all d : Door { one r : Room | d in r.doors }  }
+fact NoFloatingDoors { all d : Door { one r : Room | d in r.doors }  }
 
 -- No two rooms share a door
 fact NoSharedDoors { all r : Room { all s : (Room - r) | #(r.doors & s.doors) = 0 } }
@@ -84,7 +84,7 @@ fact AccessibleRooms { Room in first.start.*(doors.destination) }
 fact SameGoal { all m : Maze | first.start = m.start and first.goal = m.goal }
 
 -- Every door set with the same destination has digital root equals to 9
---fact EveryoneLeaves { all r : Room - first.start { all d : r.entrances { DigitalRoot[d.dcode] = Nine } } }
+-- fact EveryoneLeaves { all r : Room - first.start { all d : r.entrances { DigitalRoot[d.dcode] = Nine } } }
 
 -- Every door is one of its destination entrances
 fact NoFakeEntrances {	all r : Room { 
@@ -137,13 +137,15 @@ pred AdmissionExam [m, m' : Maze] {
 		one d : r.doors {
 
 			-- Choose a group of players
-			some p : Player {
+			lone p : Player {
+			-- one/some => each at a time
+			-- lone => t he fuck going up, down, sideways and shit
 
 				-- At least m and at most n players can pass through the door
 				#p >= 1
 
-				-- There must be at least 1 player in the room
-				all p' : p { where[m,p'] = r } 
+				-- The selected players must be in the selected room
+				where[m,p] = r 
 
 				-- The door-opening requirement must be fulfilled
 		 		-- DigitalRoot[p.pcode] = d.dcode // WORKS
@@ -156,10 +158,10 @@ pred AdmissionExam [m, m' : Maze] {
 }
 
 fact Transition {
-	all m : Maze, m' : m.next { 
-	 AdmissionExam[m, m'] => 
+	all m : Maze, m' : m.next {
+		AdmissionExam[m, m'] => 
 			#m'.occupies != 0 
- 	else
+ 		else
 			m'.occupies = m.occupies 
 	}
 }
@@ -172,4 +174,4 @@ pred AllStart { first.occupies = Player->first.start }
 
 -- check AllStart {} for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 3 Maze, 1 SM
 
-run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 30 Maze
+run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 10 Maze
