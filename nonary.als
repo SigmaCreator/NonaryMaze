@@ -30,30 +30,32 @@ sig Maze {rooms : set Room, start, goal : one Room, occupies : Player-> one Room
 	-- The starting room is not the goal room
 	start != goal
 
-	-- The goal room doesn't have doors as it is the end of the maze
+	-- The starting room has no entrance (How did they get in?)
+	#start.entrances = 0
+
+	-- The goal room has no exit (Do they really get out?)
 	#goal.doors = 0
 
 	-- Every room is part of the maze
 	rooms = Room
 
-	-- No room leads to a dead end / No cul-de-sac
+	-- No room except the goal leads to a dead end / No cul-de-sac
 	no r : rooms - goal | #r.doors = 0
 
+	-- All rooms have at most 3 doors
 	all r : rooms { #r.doors <= 3 }
 
 	-- Only one room has one door
 	one r : rooms | #r.doors = 1
 
-	-- The digital root of the doors in a room is 9
-	-- all r : rooms | DigitalRoot[r.doors.dcode] = Nine
-
 	-- The 9 door is the only one to lead to the goal room
-	all r : rooms | { 
-		all d : r.doors | 
+	all r : rooms { 
+		all d : r.doors { 
 			d.dcode = Nine => 
 				d.destination = goal 
 			else
 				d.destination in rooms - goal
+		}
 	}
 }
 
@@ -64,7 +66,7 @@ fact Initialization { first.occupies = Player->first.start }
 fact NoOutsideDoors { all d : Door { one r : Room | d in r.doors }  }
 
 -- No two rooms share a door
-fact NoSharedDoors { all r : Room { all s : (Room - r) | #(r.doors & s.doors) = 0}}
+fact NoSharedDoors { all r : Room { all s : (Room - r) | #(r.doors & s.doors) = 0 } }
 
 -- No room leads back to itself
 fact NoReturn { no r : Room | r in r.^(doors.destination) }
@@ -82,16 +84,19 @@ fact AccessibleRooms { Room in first.start.*(doors.destination) }
 fact SameGoal { all m : Maze | first.start = m.start and first.goal = m.goal }
 
 -- Every door set with the same destination has digital root equals to 9
---fact EveryoneLeaves { all r : Door.destination - first.goal { some d : Door | d in r.doors and r = d.destination => DigitalRoot[d.dcode] = Nine } }	
-
--- The starting room has no entrance (How did they get in?)
-fact NoMainEntrance { one r : first.start | #r.entrances = 0 }
+--fact EveryoneLeaves { all r : Room - first.start { all d : r.entrances { DigitalRoot[d.dcode] = Nine } } }
 
 -- Every door is one of its destination entrances
--- fact NoQuantumEntrances { all d : Door | d in d.destination.entrances }
+fact NoFakeEntrances {	all r : Room { 
+					all d : Door {  
+						r in d.destination => 
+							d in r.entrances 
+						else 
+							d not in r.entrances 
+		} 
+	} 
+}
 
--- No room has its entrances leading somewhere else
--- fact NoFakeEntrance{ no r : Room | all d : r.entrances | d.destination != r } 
 
 -- Get player location
 fun where [ m : Maze , p : Player ] : one Room {
@@ -104,19 +109,19 @@ fun SetSum[nums : set Natural] : lone Natural {
 }
 
 -- Nines Out Operation
-fun NinesOut [a : Natural, n : Natural] : Natural { 
-	lt[a,n] =>
+fun NinesOut [a : Natural] : Natural { 
+	lt[a,Nine] =>
 		a
 	else
-		NinesOut[nat/sub[a,Nine],Nine]
+		NinesOut[nat/sub[a,Nine]]
 }
 
 -- Digital Root
 fun DigitalRoot [ids : set Natural] : Natural { 
-	NinesOut[SetSum[ids], Nine] = nat/Zero => 
+	NinesOut[SetSum[ids]] = nat/Zero => 
 		Nine
 	else 
-		NinesOut[SetSum[ids], Nine]
+		NinesOut[SetSum[ids]]
 }
 
 pred TraverseDoor [m, m' : Maze, to : Room, p : Player] {
