@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-    public readonly int playerCode;
+    int playerCode = 0;
+    public int Code
+    {
+        get { return playerCode; }
+        set { playerCode = playerCode == 0 ? value : playerCode; }
+    } 
+
     GameController gc;
     SpriteRenderer _sprite;
 

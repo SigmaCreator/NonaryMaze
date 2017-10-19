@@ -4,11 +4,30 @@ using UnityEngine;
 
 public class Door : MonoBehaviour {
 
+    GameController _gc;
 
     IDoorOpeningRule _rule;
-    public readonly int doorCode;
-    GameController _gc;
+    public IDoorOpeningRule Rule
+    {
+        get { return _rule; }
+        set { _rule = _rule ?? value; }
+    }
+
+
+    int _doorCode;
+    public int Code
+    {
+        get { return _doorCode; }
+        set { _doorCode = _doorCode == 0 ? value : _doorCode; }
+    }
+    
     Room _destination;
+    public Room Destination
+    {
+        get { return _destination; }
+        set { _destination = _destination ?? value; }
+    }
+
     Collider2D _collider;
     Vector3 _position;
     Vector3 _transform;
@@ -30,8 +49,8 @@ public class Door : MonoBehaviour {
 
     bool UnlockDoor(List<Player> selection) {
 
+        return _rule.VerifyCode(selection, _doorCode);
 
-        return _rule.;
     }
     
 }

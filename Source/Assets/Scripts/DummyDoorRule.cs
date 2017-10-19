@@ -17,7 +17,7 @@ public class DummyDoorRule : ScriptableObject, IDoorOpeningRule
     public bool VerifyCode(List<Player> selection, int doorCode)
     {
         int pHash = 0;
-        foreach (Player p in selection) { pHash += p.playerCode; }
+        foreach (Player p in selection) { pHash += p.Code; }
         pHash %= 9;
         pHash = pHash == 0 ? 9 : pHash;
 
