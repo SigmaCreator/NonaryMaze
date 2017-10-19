@@ -38,8 +38,8 @@ public class Maze : ScriptableObject {
 
 
         /* Creates Prefabs 
-           Based on graph Recieved
-         
+           positions everything
+           Or should this be somewhere else?
          */
 
     }

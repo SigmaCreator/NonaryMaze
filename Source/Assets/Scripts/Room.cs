@@ -21,7 +21,7 @@ public class Room : ScriptableObject {
         }
     }
 
-    bool RemovePlayers(List<Player> selection) {
+    public bool RemovePlayers(List<Player> selection) {
 
         foreach (Player p in selection) {
             if (!_occupants.Contains(p)) {
@@ -34,13 +34,13 @@ public class Room : ScriptableObject {
 
     }
 
-    bool AddPlayers(List<Player> selection)
+    public bool AddPlayers(List<Player> selection)
     {
         _occupants.AddRange(selection);
         return true;
     }
 
-    void SetDoors(List<Door> doors) {
+    public void SetDoors(List<Door> doors) {
         _doors.Clear();  
         _doors.AddRange(doors);
     }
