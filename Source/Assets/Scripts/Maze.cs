@@ -2,15 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Maze : ScriptableObject {
 
+    [SerializeField]
     List<Player> _players = new List<Player>();
+
+    [SerializeField]
     List<Door> _doors = new List<Door>();
+
+    [SerializeField]
     List<Room> _rooms = new List<Room>();
 
+    [SerializeField]
     Room start;
     public Room Start { get { return start; }
                         set { start = start ?? value; } }
+    [SerializeField]
     Room goal;
     public Room Goal { get { return goal; }
                        set { goal = goal ?? value; } }
@@ -30,12 +38,10 @@ public class Maze : ScriptableObject {
         foreach (Room r in _rooms) { yield return r; }
     }
 
-    void InitMaze(List<Player> players, List<Door> doors, List<Room> rooms) {
+    public void InitMaze(List<Player> players, List<Door> doors, List<Room> rooms) {
         _players.AddRange(players);
         _doors.AddRange(doors);
         _rooms.AddRange(rooms);
-
-
 
         /* Creates Prefabs 
            positions everything

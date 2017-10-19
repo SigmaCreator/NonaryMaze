@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Room : ScriptableObject {
 
+    [SerializeField]
     List<Player> _occupants = new List<Player>();
+
+    [SerializeField]
     List<Door> _doors = new List<Door>();
     
     public IEnumerator<Player> Occupants() {

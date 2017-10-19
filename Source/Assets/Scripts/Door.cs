@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Door : MonoBehaviour {
 
     GameController _gc;
 
+    [SerializeField]
     IDoorOpeningRule _rule;
     public IDoorOpeningRule Rule
     {
@@ -13,7 +15,7 @@ public class Door : MonoBehaviour {
         set { _rule = _rule ?? value; }
     }
 
-
+    [SerializeField]
     int _doorCode;
     public int Code
     {
@@ -21,6 +23,7 @@ public class Door : MonoBehaviour {
         set { _doorCode = _doorCode == 0 ? value : _doorCode; }
     }
     
+    [SerializeField]
     Room _destination;
     public Room Destination
     {
