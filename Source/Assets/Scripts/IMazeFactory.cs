@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-interface IMazeFactory {
-
-
+public interface IMazeFactory {
+    Maze GenerateMaze();
 }

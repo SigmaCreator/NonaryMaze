@@ -4,8 +4,17 @@ using UnityEngine;
 
 public class Door : MonoBehaviour {
 
-	// Use this for initialization
-	void Start () {
+
+    IDoorOpeningRule _rule;
+    public readonly int doorCode;
+    GameController _gc;
+    Room _destination;
+    Collider2D _collider;
+    Vector3 _position;
+    Vector3 _transform;
+
+    // Use this for initialization
+    void Start () {
 		
 	}
 	
@@ -13,4 +22,16 @@ public class Door : MonoBehaviour {
 	void Update () {
 		
 	}
+
+    void OnTouch() {
+
+
+    }
+
+    bool UnlockDoor(List<Player> selection) {
+
+
+        return _rule.;
+    }
+    
 }

@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-interface IDoorOpeningRule {
+public interface IDoorOpeningRule{
+
+    IDoorOpeningRule CompositeRule { get; set; }
+
+    bool VerifyCode(List<Player> selection, int doorCode);
 
 }
