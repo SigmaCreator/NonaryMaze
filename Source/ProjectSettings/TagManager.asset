@@ -38,6 +38,12 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Room
+    uniqueID: 2367490241
+    locked: 0
+  - name: Interactables
+    uniqueID: 1689181713
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

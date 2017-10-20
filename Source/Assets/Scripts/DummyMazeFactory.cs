@@ -8,12 +8,14 @@ public class DummyMazeFactory : IMazeFactory
 
     public Maze GenerateMaze()
     {
-        System.Type roomType = typeof(Room);
         System.Type mazeType = typeof(Maze);
         System.Type doorRuleType = typeof(DummyDoorRule);
 
+        #region Prefabs
         GameObject doorPrefab = (GameObject)Resources.Load("Prefabs/Door");
         GameObject playerPrefab = (GameObject)Resources.Load("Prefabs/Player");
+        GameObject roomPrefab = (GameObject)Resources.Load("Prefabs/Room");
+        #endregion
 
         Maze maze = (Maze)ScriptableObject.CreateInstance(mazeType);
 
@@ -25,8 +27,13 @@ public class DummyMazeFactory : IMazeFactory
 
 
         #region Initializes Rooms
-        Room start = (Room)ScriptableObject.CreateInstance(roomType);
-        Room goal = (Room)ScriptableObject.CreateInstance(roomType);
+        Room start = GameObject.Instantiate(roomPrefab).GetComponent<Room>();
+        Room goal = GameObject.Instantiate(roomPrefab).GetComponent<Room>();
+        start.name = "RoomStart";
+        goal.name = "RoomGoal";
+
+        start.gameObject.transform.position = new Vector3(0f, (-640 / 128) , 0f);
+        goal.gameObject.transform.position = new Vector3(0f, (-640 / 128) + 4 * 2.5f, 0f);
 
         maze.Start = start;
         maze.Goal = goal;
@@ -35,7 +42,10 @@ public class DummyMazeFactory : IMazeFactory
 
         for (int i = 1; i < 4; i++)
         {
-            rooms.Add((Room)ScriptableObject.CreateInstance(roomType)) ;
+            Room room = GameObject.Instantiate(roomPrefab).GetComponent<Room>();
+            room.name = "Room" + i;
+            room.gameObject.transform.position = new Vector3(0f, (-640 / 128) + (i)*2.5f , 0f);
+            rooms.Add(room) ;
         }
 
         rooms.Add(goal);
@@ -47,8 +57,6 @@ public class DummyMazeFactory : IMazeFactory
         //                     1  2  3  4  5  6  7  8  9
         int[] destinations = { 4, 4, 3, 2, 2, 4, 3, 3, 5 };
 
-        Debug.Log(rooms.Count);
-
         for (int i = 1; i < 10; i++)
         {
             Door door = GameObject.Instantiate(doorPrefab).GetComponent<Door>();
@@ -56,9 +64,12 @@ public class DummyMazeFactory : IMazeFactory
             door.Code = i;
             door.Rule = doorRule;
             door.Destination = rooms[destinations[i-1]-1];
+            door.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/ph_Door" + i);
             doors.Add(door);
         }
 
+        // which room has which doors.
+        // Could recieve this by a parameter.
         int[][] roomDoors = { new int[]{4, 5},      //0
                               new int[]{3, 7, 8},   //1
                               new int[]{2, 6, 1},   //2
@@ -85,6 +96,7 @@ public class DummyMazeFactory : IMazeFactory
             Player player = GameObject.Instantiate(playerPrefab).GetComponent<Player>();
             player.Code = i;
             player.name = "Player" + i;
+            player.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/ph_Player"+i);
             players.Add(player);
 
         }

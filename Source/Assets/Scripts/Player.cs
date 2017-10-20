@@ -7,6 +7,7 @@ public class Player : MonoBehaviour {
 
     [SerializeField]
     int playerCode = 0;
+
     public int Code
     {
         get { return playerCode; }

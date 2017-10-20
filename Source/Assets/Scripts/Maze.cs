@@ -38,6 +38,12 @@ public class Maze : ScriptableObject {
         foreach (Room r in _rooms) { yield return r; }
     }
 
+    public void PlotMaze() {
+
+
+
+    }
+
     public void InitMaze(List<Player> players, List<Door> doors, List<Room> rooms) {
         _players.AddRange(players);
         _doors.AddRange(doors);
@@ -47,6 +53,8 @@ public class Maze : ScriptableObject {
            positions everything
            Or should this be somewhere else?
          */
+
+        PlotMaze();
 
     }
 
