@@ -10,10 +10,8 @@ let Seven = nat/add[Six, nat/One]
 let Eight = nat/add[Seven, nat/One]
 let Nine = nat/add[Eight, nat/One]
 let Ten = nat/add[Nine, nat/One]
-
-sig Info {maze, maze' : one Maze, destination : one Room, player : set Player}
 	
-sig Player {pcode : Natural}{
+sig Player {pcode : Natural, moves : set Room->Room}{
 	-- Player code is a number in 1~9
 	gte[pcode, nat/One]
 	lte[pcode, Nine]
@@ -126,57 +124,55 @@ fun DigitalRoot [ids : set Natural] : Natural {
 		NinesOut[SetSum[ids]]
 }
 
-pred TraverseDoor [i : Info] {
-	i.maze'.occupies = i.maze.occupies ++ (i.player->i.destination) 
+
+pred Transition [m, m' : Maze, to : Room, p : Player] {
+	m'.occupies = m.occupies ++ (p->to)
 }
 
-fun AdmissionExam [m, m' : Maze, info : Info] : one Info {
+fun validMove [from, to : Room] : Room->Room {
+	to in from.doors.destination => 
+		from->to
+	else 
+		from->from	
+}
 
-	-- Choose a room
-	one r : m.rooms { 
-
-		-- Choose a door
+sig Combo { m : Maze, people : set Player }{
+	#people >= 3
+	#people <= 5
+	one r : Room { 
+		all p : people { 
+			where[m,p] = r
+		} 
 		one d : r.doors {
-
-			-- Choose a group of players
-			some p : Player {
-
-				one i : Info {
-			-- one/some => each at a time
-			-- lone => t he fuck going up, down, sideways and shit
-
-				-- At least m and at most n players can pass through the door
-				i = info and
-				i.maze = m and 
-				i.maze' = m' and 
-				#i.player >= 1 and 
-				i.player = p and
-				where[m,p] = r and
-				r = where[i.maze,i.player] and
-				i.destination = d
-
-
-				-- The selected players must be in the selected room
-
-				-- The door-opening requirement must be fulfilled
-		 		-- DigitalRoot[p.pcode] = d.dcode // WORKS
-
-				-- The players must be at the destination
-				 }
-			}
-		}
-	} =>
-		info
-
-}
-
-fact Transition {
-	all m : Maze, m' : m.next {
-		one i : Info {
-		TraverseDoor[AdmissionExam[m, m', i]]
+			DigitalRoot[people.pcode] = d.dcode 
 		}
 	}
+	
 }
+
+--fact { Comb.people = combination[Nine,Player]} 
+
+--pred combination [ RED : Natural, players : some Player] : some Player {
+--	{ p : players |  DigitalRoot[p.pcode] = RED }
+--}
+
+
+--pred AdmissionExam [m, m' : Maze] {
+		
+--	some r : Room - m.goal {
+--		one d : r.doors {
+--			all p : Player {
+--				where[m,p] = r
+				--Transition[m,m',d.destination,combination[d.dcode,p]]
+--			}
+--		}
+--	}
+
+--}
+
+--fact Movement {
+--	all m : Maze - last | one m' : m.next | AdmissionExam[m, m']
+--}
 
 
 
@@ -186,4 +182,4 @@ pred AllStart { first.occupies = Player->first.start }
 
 -- check AllStart {} for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 3 Maze, 1 SM
 
-run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 10 Maze
+run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 20 Maze, 5 Combo
