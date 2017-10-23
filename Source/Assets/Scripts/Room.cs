@@ -80,7 +80,7 @@ public class Room : MonoBehaviour {
     public void SetDoors(List<Door> doors) {
         _doors.Clear();  
         _doors.AddRange(doors);
-        SettlePlayers();
+        SettleDoors();
     }
 
     // Settles players inside the room.
@@ -100,20 +100,20 @@ public class Room : MonoBehaviour {
 
         Transform[] anchors = new Transform[_doors.Count];
 
-        switch (transform.childCount) {
+        switch (_doors.Count) {
 
             case 0: break;
             case 1:
                 anchors[0] = transform.Find("DoorAnchor1");
                 break;
             case 2:
-                anchors[0] = transform.Find("DoorAnchor4");
-                anchors[1] = transform.Find("DoorAnchor5");
+                anchors[0] = transform.Find("DoorAnchor2");
+                anchors[1] = transform.Find("DoorAnchor3");
                 break;
             case 3:
                 anchors[0] = transform.Find("DoorAnchor1");
                 anchors[1] = transform.Find("DoorAnchor2");
-                anchors[0] = transform.Find("DoorAnchor3");
+                anchors[2] = transform.Find("DoorAnchor3");
                 break;
             default:
                 Debug.Log("Room exceeds door quantity");
