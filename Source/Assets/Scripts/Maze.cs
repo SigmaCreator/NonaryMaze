@@ -49,11 +49,6 @@ public class Maze : ScriptableObject {
         _doors.AddRange(doors);
         _rooms.AddRange(rooms);
 
-        /* Creates Prefabs 
-           positions everything
-           Or should this be somewhere else?
-         */
-
         PlotMaze();
 
     }

@@ -32,8 +32,7 @@ public class DummyMazeFactory : IMazeFactory
         start.name = "RoomStart";
         goal.name = "RoomGoal";
 
-        start.gameObject.transform.position = new Vector3(0f, (-640 / 128) , 0f);
-        goal.gameObject.transform.position = new Vector3(0f, (-640 / 128) + 4 * 2.5f, 0f);
+        start.gameObject.transform.position = new Vector3(0f, -4f , 0f);
 
         maze.Start = start;
         maze.Goal = goal;
@@ -44,11 +43,17 @@ public class DummyMazeFactory : IMazeFactory
         {
             Room room = GameObject.Instantiate(roomPrefab).GetComponent<Room>();
             room.name = "Room" + i;
-            room.gameObject.transform.position = new Vector3(0f, (-640 / 128) + (i)*2.5f , 0f);
             rooms.Add(room) ;
         }
 
         rooms.Add(goal);
+
+
+        for (int i = 1; i < rooms.Count; i++)
+        {
+            rooms[i].transform.position = rooms[i - 1].transform.Find("RoomAnchor").position;
+        }
+
         #endregion
 
         #region Initializes Doors

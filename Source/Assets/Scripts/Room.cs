@@ -11,18 +11,44 @@ public class Room : MonoBehaviour {
     [SerializeField]
     List<Door> _doors = new List<Door>();
 
+    Vector3[] _playerAnchors = new Vector3[9];
+
+    Vector3 _roomScale;
+    Transform _transform;
+
+    SpriteRenderer _sprite;
+
     public void Awake()
     {
+        _sprite = transform.GetComponent<SpriteRenderer>();
+
+        _transform = gameObject.transform;
+        _roomScale = _transform.localScale;
+
         // initializes the room
+        float widthDelta = (_roomScale.x * 0.8f) / 5f;
+        float heightDelta = (_roomScale.y * 0.5f) / 2f ;
+
+        _playerAnchors[0] = new Vector3(0f, heightDelta, 0f);
+        _playerAnchors[1] = new Vector3(-widthDelta, heightDelta, 0f);
+        _playerAnchors[2] = new Vector3(widthDelta, heightDelta, 0f);
+        _playerAnchors[3] = new Vector3(2f * (-widthDelta), heightDelta, 0f);
+        _playerAnchors[4] = new Vector3(2f * widthDelta, heightDelta, 0f);
+
+        _playerAnchors[5] = new Vector3(-widthDelta, -heightDelta, 0f);
+        _playerAnchors[6] = new Vector3(widthDelta, -heightDelta, 0f);
+        _playerAnchors[7] = new Vector3(2f * (-widthDelta), -heightDelta, 0f);
+        _playerAnchors[8] = new Vector3(2f * widthDelta, -heightDelta, 0f);
+
     }
 
-    public IEnumerator<Player> Occupants() {
+    public IEnumerable<Player> Occupants() {
         foreach (Player p in _occupants) {
             yield return p;
         }
     }
 
-    public IEnumerator<Door> Doors()
+    public IEnumerable<Door> Doors()
     {
         foreach (Door p in _doors)
         {
@@ -47,6 +73,7 @@ public class Room : MonoBehaviour {
     public bool AddPlayers(List<Player> selection)
     {
         _occupants.AddRange(selection);
+        SettlePlayers();
         return true;
     }
 
@@ -58,6 +85,49 @@ public class Room : MonoBehaviour {
 
     // Settles players inside the room.
     // Positions them in a way they fit comfortably
-    public void SettlePlayers() { }
+    public void SettlePlayers() {
+
+
+        for (int i = 0; i < _occupants.Count; i++) {
+            _occupants[i].transform.position = _playerAnchors[i] + _transform.position;
+        }
+
+    }
+
+    // Settles doors that lead out of the room
+    // Poistions them at the corresponding anchors
+    public void SettleDoors() {
+
+        Transform[] anchors = new Transform[_doors.Count];
+
+        switch (transform.childCount) {
+
+            case 0: break;
+            case 1:
+                anchors[0] = transform.Find("DoorAnchor1");
+                break;
+            case 2:
+                anchors[0] = transform.Find("DoorAnchor4");
+                anchors[1] = transform.Find("DoorAnchor5");
+                break;
+            case 3:
+                anchors[0] = transform.Find("DoorAnchor1");
+                anchors[1] = transform.Find("DoorAnchor2");
+                anchors[0] = transform.Find("DoorAnchor3");
+                break;
+            default:
+                Debug.Log("Room exceeds door quantity");
+                return;
+        }
+
+        int count = 0;
+
+        foreach (Door d in Doors()) {
+            d.transform.position = anchors[count].position;
+            ++count;
+        }
+
+    }
+
 
 }
