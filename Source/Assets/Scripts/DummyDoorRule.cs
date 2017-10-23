@@ -14,6 +14,8 @@ public class DummyDoorRule : ScriptableObject, IDoorOpeningRule
         set {  _compositeRule = value; }
     }
 
+
+    // Digital Root rule
     public bool VerifyCode(List<Player> selection, int doorCode)
     {
         int pHash = 0;
@@ -21,7 +23,7 @@ public class DummyDoorRule : ScriptableObject, IDoorOpeningRule
         pHash %= 9;
         pHash = pHash == 0 ? 9 : pHash;
 
-        return pHash == doorCode && (_compositeRule != null? VerifyCode(selection, doorCode) : true);
+        return pHash == doorCode && (_compositeRule != null ? VerifyCode(selection, doorCode) : true);
 
     }
 }

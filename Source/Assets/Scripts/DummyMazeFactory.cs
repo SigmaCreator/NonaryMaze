@@ -87,7 +87,9 @@ public class DummyMazeFactory : IMazeFactory
         {
             List<Door> newDoors = new List<Door>();
 
-            foreach (int j in roomDoors[i]) { newDoors.Add(doors[j-1]); }
+            foreach (int j in roomDoors[i]) {
+                newDoors.Add(doors[j-1]);
+            }
 
             rooms[i].SetDoors(newDoors);
 

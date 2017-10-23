@@ -31,26 +31,34 @@ public class Door : MonoBehaviour {
         set { _destination = _destination ?? value; }
     }
 
+    [SerializeField]
+    Room _origin;
+    public Room Origin
+    {
+        get { return _origin; }
+        set { _origin = _origin ?? value; }
+    }
+
     Collider2D _collider;
     Vector3 _position;
     Vector3 _transform;
 
     // Use this for initialization
-    void Start () {
+    public void Start () {
 		
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	public void Update () {
 		
 	}
 
-    void OnTouch() {
+    public void OnTouch() {
 
 
     }
 
-    bool UnlockDoor(List<Player> selection) {
+    public bool UnlockDoor(List<Player> selection) {
 
         return _rule.VerifyCode(selection, _doorCode);
 
