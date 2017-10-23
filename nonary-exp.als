@@ -11,7 +11,7 @@ let Eight = nat/add[Seven, nat/One]
 let Nine = nat/add[Eight, nat/One]
 let Ten = nat/add[Nine, nat/One]
 	
-sig Player {pcode : Natural, moves : set Room->Room}{
+sig Player {pcode : Natural}{
 	-- Player code is a number in 1~9
 	gte[pcode, nat/One]
 	lte[pcode, Nine]
@@ -136,23 +136,25 @@ fun validMove [from, to : Room] : Room->Room {
 		from->from	
 }
 
-sig Combo { m : Maze, people : set Player }{
+sig Combo { maze : Maze, people : set Player }{
 	#people >= 3
 	#people <= 5
-	one r : Room { 
-		all p : people { 
-			where[m,p] = r
-		} 
-		one d : r.doors {
-			DigitalRoot[people.pcode] = d.dcode 
-		}
+	one r : Room {
+		all p : people | where[maze,p] = r
+		one d : r.doors | DigitalRoot[people.pcode] = d.dcode 
 	}
-	
+}
+
+fact AllMazesCombo { 
+	all m : Maze | m.occupies != Player->m.goal =>
+		{ some c : Combo | c.maze = m }
+	else
+		{ no c : Combo | c.maze = m }							  
 }
 
 --fact { Comb.people = combination[Nine,Player]} 
 
---pred combination [ RED : Natural, players : some Player] : some Player {
+--fun combination [ RED : Natural, players : some Player] : some Player {
 --	{ p : players |  DigitalRoot[p.pcode] = RED }
 --}
 
@@ -182,4 +184,4 @@ pred AllStart { first.occupies = Player->first.start }
 
 -- check AllStart {} for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 3 Maze, 1 SM
 
-run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 20 Maze, 5 Combo
+run { }  for 35 Natural, exactly 9 Player, exactly 9 Door, 5 Room, 5 Maze, 10 Combo
