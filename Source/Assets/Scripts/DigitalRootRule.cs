@@ -4,7 +4,7 @@ using UnityEngine;
 
 // TODO Change this architecture to an abstract class.
 // Is the that scriptableobject inheritance required?
-public class DummyDoorRule : ScriptableObject, IDoorOpeningRule
+public class DigitalRootRule : ScriptableObject, IDoorOpeningRule
 {
     IDoorOpeningRule _compositeRule;
     public IDoorOpeningRule CompositeRule
@@ -23,7 +23,8 @@ public class DummyDoorRule : ScriptableObject, IDoorOpeningRule
         pHash %= 9;
         pHash = pHash == 0 ? 9 : pHash;
 
-        return pHash == doorCode && (_compositeRule != null ? VerifyCode(selection, doorCode) : true);
+        return pHash == doorCode && 
+               (_compositeRule != null ? _compositeRule.VerifyCode(selection, doorCode) : true);
 
     }
 }

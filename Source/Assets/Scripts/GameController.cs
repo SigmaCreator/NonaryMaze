@@ -70,7 +70,17 @@ public class GameController : MonoBehaviour {
                     door.Origin.RemovePlayers(_selectedPlayers);
                     door.Destination.AddPlayers(_selectedPlayers);
 
+                    foreach (Player p in _selectedPlayers)
+                    {
+                        p.OnTouch();
+                    }
+                    _selectedPlayers.Clear();
                 }
+
+                //Unselects players
+
+                
+
             }
         }
 		

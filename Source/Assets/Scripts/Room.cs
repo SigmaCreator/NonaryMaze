@@ -35,10 +35,10 @@ public class Room : MonoBehaviour {
         _playerAnchors[3] = new Vector3(2f * (-widthDelta), heightDelta, 0f);
         _playerAnchors[4] = new Vector3(2f * widthDelta, heightDelta, 0f);
 
-        _playerAnchors[5] = new Vector3(-widthDelta, -heightDelta, 0f);
-        _playerAnchors[6] = new Vector3(widthDelta, -heightDelta, 0f);
-        _playerAnchors[7] = new Vector3(2f * (-widthDelta), -heightDelta, 0f);
-        _playerAnchors[8] = new Vector3(2f * widthDelta, -heightDelta, 0f);
+        _playerAnchors[5] = new Vector3(0.5f * (-widthDelta), -heightDelta, 0f);
+        _playerAnchors[6] = new Vector3(0.5f * widthDelta, -heightDelta, 0f);
+        _playerAnchors[7] = new Vector3(1.5f * (-widthDelta), -heightDelta, 0f);
+        _playerAnchors[8] = new Vector3(1.5f * widthDelta, -heightDelta, 0f);
 
     }
 

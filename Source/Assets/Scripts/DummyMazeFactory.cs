@@ -9,7 +9,9 @@ public class DummyMazeFactory : IMazeFactory
     public Maze GenerateMaze()
     {
         System.Type mazeType = typeof(Maze);
-        System.Type doorRuleType = typeof(DummyDoorRule);
+        System.Type digitalRuleType = typeof(DigitalRootRule);
+        System.Type threeOrFiveRuleType = typeof(ThreeOrFiveRule);
+
 
         #region Prefabs
         GameObject doorPrefab = (GameObject)Resources.Load("Prefabs/Door");
@@ -57,7 +59,9 @@ public class DummyMazeFactory : IMazeFactory
         #endregion
 
         #region Initializes Doors
-        IDoorOpeningRule doorRule = (IDoorOpeningRule)ScriptableObject.CreateInstance(doorRuleType);
+        IDoorOpeningRule doorRule = (IDoorOpeningRule)ScriptableObject.CreateInstance(digitalRuleType);
+        IDoorOpeningRule doorRule2 = (IDoorOpeningRule)ScriptableObject.CreateInstance(threeOrFiveRuleType);
+        doorRule.CompositeRule = doorRule2;
 
         //                     1  2  3  4  5  6  7  8  9
         int[] destinations = { 4, 4, 3, 2, 2, 4, 3, 3, 5 };
