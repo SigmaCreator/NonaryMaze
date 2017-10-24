@@ -39,8 +39,7 @@ public class Player : MonoBehaviour {
     }
 
     public void OnTouch() {
-
-        Debug.Log(name + " Touched");
+        
         if (_selected)
         {
             _selected = !_selected;
