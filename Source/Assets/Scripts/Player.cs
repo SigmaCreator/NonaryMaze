@@ -46,7 +46,7 @@ public class Player : MonoBehaviour {
     Vector3[] scales;
     bool _selected = false;
 
-    float _selectionAnimator = 0f;
+    float _selectionAnimator = Mathf.PI/2f;
 
     void Start()
     {
@@ -69,6 +69,18 @@ public class Player : MonoBehaviour {
 
     }
 
+    public void Update()
+    {
+        if (_selected) {
+
+            _selectionAnimator += Time.deltaTime;
+
+            //TODO ineffective, cache this cleanly
+            _chracterSprite.gameObject.transform.Rotate(new Vector3(0f, 0f, Mathf.Sin(_selectionAnimator)));
+            
+        }
+    }
+
     public void OnTouch() {
         
         if (_selected)
@@ -77,6 +89,9 @@ public class Player : MonoBehaviour {
             //_chracterSprite.color = colors[0];
             _chracterSprite.sprite = Sprites[0];
             transform.localScale = scales[0];
+
+            _selectionAnimator = Mathf.PI / 2f;
+            _chracterSprite.transform.rotation = Quaternion.identity;
         }
         else
         {
