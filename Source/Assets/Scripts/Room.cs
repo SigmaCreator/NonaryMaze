@@ -11,8 +11,11 @@ public class Room : MonoBehaviour {
     [SerializeField]
     List<Door> _doors = new List<Door>();
 
+    // Positions players can occupy in room.
+    [SerializeField]
     Vector3[] _playerAnchors = new Vector3[9];
 
+    // Cacheing informations
     Vector3 _roomScale;
     Transform _transform;
 
@@ -29,6 +32,7 @@ public class Room : MonoBehaviour {
         float widthDelta = (_roomScale.x * 0.8f) / 5f;
         float heightDelta = (_roomScale.y * 0.5f) / 2f ;
 
+        // Positions players can occupy in room.
         _playerAnchors[0] = new Vector3(0f, heightDelta, 0f);
         _playerAnchors[1] = new Vector3(-widthDelta, heightDelta, 0f);
         _playerAnchors[2] = new Vector3(widthDelta, heightDelta, 0f);
@@ -107,6 +111,7 @@ public class Room : MonoBehaviour {
 
         Transform[] anchors = new Transform[_doors.Count];
 
+        //Settles the doors in somewhat pleasing configurations
         switch (_doors.Count) {
 
             case 0: break;

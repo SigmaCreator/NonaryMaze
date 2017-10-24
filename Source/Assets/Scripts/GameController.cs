@@ -5,6 +5,15 @@ using UnityEngine;
 [System.Serializable]
 public class GameController : MonoBehaviour {
 
+    /*
+     *  TODO The ACTUAL UI. Preferably with:
+     *  -Some- explanations.
+     *  A menu for reload/undo.
+     *  Maybe an undo feature.
+     *  Some pedantic congratulatory message for the eventual Win.
+     * 
+     */
+
     public enum GameState {
         MENU,
         IN_GAME,

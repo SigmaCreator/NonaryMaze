@@ -6,6 +6,16 @@ public class DummyMazeFactory : IMazeFactory
 {
 
 
+    /* Door - Room relation arrays can easily be reassembled into parameters
+       for maze generation. We just need more accurate rules base generation on.
+
+        Generates a straight corridor instance of the problem.
+        Same as the inspiring problem.
+
+        Maze is a sequence of 5 connected rooms, connected by some door.
+
+     */
+
     public Maze GenerateMaze()
     {
         System.Type mazeType = typeof(Maze);
