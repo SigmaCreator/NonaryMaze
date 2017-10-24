@@ -112,12 +112,31 @@ public class DummyMazeFactory : IMazeFactory
 
 
         #region Initializes Players
+        
+        // Shuffles the player list for fun.
+        List<int> playerRandomizer = new List<int> {1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        for (int i = 0; i < playerRandomizer.Count; i++) {
+            int rand = Random.Range(0, 8);
+
+            if (rand == i) { continue; }
+            playerRandomizer[i] += playerRandomizer[rand];
+            playerRandomizer[rand] = playerRandomizer[i] - playerRandomizer[rand];
+            playerRandomizer[i] -= playerRandomizer[rand];
+        }
+
+
         for (int i = 1; i < 10; i++)
         {
             Player player = GameObject.Instantiate(playerPrefab).GetComponent<Player>();
             player.Code = i;
             player.name = "Player" + i;
-            player.GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("Sprites/ph_Player"+i);
+
+            Sprite[] sprites = new Sprite[2];
+            sprites[0] = Resources.Load<Sprite>("Sprites/Player" + playerRandomizer[i-1]);
+            sprites[1] = Resources.Load<Sprite>("Sprites/Player" + playerRandomizer[i-1]+"Idle");
+
+            player.Sprites = sprites;
+
             players.Add(player);
 
         }

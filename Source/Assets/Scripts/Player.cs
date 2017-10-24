@@ -5,6 +5,9 @@ using UnityEngine;
 [System.Serializable]
 public class Player : MonoBehaviour {
 
+    // Set up a state machine for character states.
+    // Selected/unselected
+
     [SerializeField]
     int playerCode = 0;
 
@@ -13,28 +16,56 @@ public class Player : MonoBehaviour {
     {
         get { return playerCode; }
         set { playerCode = playerCode == 0 ? value : playerCode; }
-    } 
+    }
+
+    public Sprite[] Sprites
+    {
+        get
+        {
+            return _sprites;
+        }
+
+        set
+        {
+            _sprites = value;
+        }
+    }
 
     GameController gc;
-    SpriteRenderer _sprite;
+
+    [SerializeField]
+    Sprite[] _sprites;
+
+    SpriteRenderer _chracterSprite;
+
+    SpriteRenderer _codeSprite;
+
     Collider2D _collider;
 
     Color[] colors;
     Vector3[] scales;
     bool _selected = false;
 
-
+    float _selectionAnimator = 0f;
 
     void Start()
     {
-        _sprite = gameObject.GetComponent<SpriteRenderer>();
+        _chracterSprite = transform.Find("CharacterSprite").gameObject.AddComponent<SpriteRenderer>();
+        _codeSprite = transform.Find("CodeSprite").gameObject.AddComponent<SpriteRenderer>();
+
+        //Asset Recycling! Saving the World!
+        _codeSprite.sprite = Resources.Load<Sprite>("Sprites/ph_Player" + Code);
+        _codeSprite.sortingOrder = 1;
+
         _collider = gameObject.GetComponent<Collider2D>();
         colors = new Color[2];
-        colors[0] = _sprite.color;
+        colors[0] = _chracterSprite.color;
         colors[1] = Color.yellow;
         scales = new Vector3[2];
         scales[0] = transform.localScale;
         scales[1] = scales[0] * 1.2f;
+
+        _chracterSprite.sprite = Sprites[0];
 
     }
 
@@ -43,13 +74,15 @@ public class Player : MonoBehaviour {
         if (_selected)
         {
             _selected = !_selected;
-            _sprite.color = colors[0];
+            //_chracterSprite.color = colors[0];
+            _chracterSprite.sprite = Sprites[0];
             transform.localScale = scales[0];
         }
         else
         {
             _selected = !_selected;
-            _sprite.color = colors[1];
+            //_chracterSprite.color = colors[1];
+            _chracterSprite.sprite = Sprites[1];
             transform.localScale = scales[1];
         }
 
