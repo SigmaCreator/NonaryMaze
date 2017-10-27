@@ -1,7 +1,8 @@
 open util/ordering[Maze] as ord
 open util/natural as nat
 
-let Two = nat/add[nat/One, nat/One]
+let Two = 
+nat/add[nat/One, nat/One]
 let Three = nat/add[Two, nat/One]
 let Four = nat/add[Three, nat/One]
 let Five  = nat/add[Four, nat/One]
@@ -92,8 +93,8 @@ fact AccessibleRooms { Room in first.start.*(doors.destination) }
 -- The starting room and the goal remain the same through maze configurations
 fact SameGoal { all m : Maze | first.start = m.start and first.goal = m.goal }
 
--- Every door set with the same destination has digital root equals to 9
--- fact EveryoneLeaves { all r : Room - first.start { all d : r.entrances { DigitalRoot[d.dcode] = Nine } } }
+-- Every door set has digital root equals to 9
+fact EveryoneLeaves { all r : Room { DigitalRoot[r.doors.dcode] = Nine } }
 
 -- Every door is one of its destination entrances
 fact NoFakeEntrances {	all r : Room { 
@@ -166,7 +167,7 @@ fact Movement { one m : first | one m' : m.next | AdmissionExam[m, m'] }
 
 
 
---assert Valid { last.goal.occupants != Player }
+assert Valid { last.occupies = Player->last.goal }
 
 pred AllStart { first.occupies = Player->first.start }
 
