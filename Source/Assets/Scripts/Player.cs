@@ -78,7 +78,7 @@ public class Player : MonoBehaviour {
     {
         switch (_state)
         {
-            case (PlayerState.SELECTED):
+            case PlayerState.SELECTED:
                 //TODO ineffective, cache this cleanly
                 _chracterSprite.gameObject.transform.Rotate(new Vector3(0f, 0f, (Mathf.Sin(Time.time * 4) / 2)));
                 //_chracterSprite.gameObject.transform.Translate(new Vector3(Mathf.Cos(Time.time * 4) / 100, Mathf.Sin(Time.time * 4) / 100, 0f));
@@ -96,12 +96,12 @@ public class Player : MonoBehaviour {
         _state = state;
         switch (_state)
         {
-            case (PlayerState.SELECTED):
+            case PlayerState.SELECTED:
                 _chracterSprite.sprite = Sprites[1];
                 transform.localScale = scales[1];
                 break;
 
-            case (PlayerState.UNSELECTED):
+            case PlayerState.UNSELECTED:
                 _chracterSprite.transform.rotation = Quaternion.identity;
                 //_chracterSprite.color = colors[0];
                 _chracterSprite.sprite = Sprites[0];
@@ -118,10 +118,10 @@ public class Player : MonoBehaviour {
 
         switch (_state)
         {
-            case (PlayerState.SELECTED):
+            case PlayerState.SELECTED:
                 ChangeState(PlayerState.UNSELECTED);
                 break;
-            case (PlayerState.UNSELECTED):
+            case PlayerState.UNSELECTED:
                 ChangeState(PlayerState.SELECTED);
                 break;
             default:

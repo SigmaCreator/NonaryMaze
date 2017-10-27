@@ -5,6 +5,14 @@ using UnityEngine;
 [System.Serializable]
 public class Door : MonoBehaviour {
 
+
+    private enum DoorState {
+        LOCKED,
+        UNLOCKED
+    }
+
+    DoorState _state = DoorState.LOCKED;
+
     GameController _gc;
 
     [SerializeField]
@@ -41,11 +49,10 @@ public class Door : MonoBehaviour {
 
     Collider2D _collider;
     Vector3 _position;
-    Vector3 _transform;
 
     // Use this for initialization
     public void Start () {
-		
+        _position = gameObject.transform.position;
 	}
 	
 	// Update is called once per frame
@@ -53,15 +60,34 @@ public class Door : MonoBehaviour {
 		
 	}
 
+    private void DoorAnimation(DoorState animation_state) {
+
+        //Starts the appropriate door animation coroutine
+        switch (animation_state)
+        {
+            case DoorState.LOCKED:
+                break;
+            case DoorState.UNLOCKED:
+                break;
+        }
+
+    }
+
     public void OnTouch() {
+        // Does some animation
+        DoorAnimation(_state);
+        LockDoor();
 
+    }
 
+    private void LockDoor() {
+        _state = DoorState.LOCKED;
     }
 
     public bool UnlockDoor(List<Player> selection) {
-
-        return _rule.VerifyCode(selection, _doorCode);
-
+        bool unlock = _rule.VerifyCode(selection, _doorCode);
+        if (unlock) { _state = DoorState.UNLOCKED; }
+        return unlock;
     }
-    
+
 }
