@@ -1,7 +1,8 @@
 open util/ordering[Maze] as ord
 open util/natural as nat
 
-let Two = nat/add[nat/One, nat/One]
+let Two = 
+nat/add[nat/One, nat/One]
 let Three = nat/add[Two, nat/One]
 let Four = nat/add[Three, nat/One]
 let Five  = nat/add[Four, nat/One]
@@ -59,6 +60,15 @@ sig Maze {rooms : set Room, start, goal : one Room, occupies : Player-> one Room
 	}
 }
 
+sig Combo { maze : Maze, people : set Player }{
+	#people >= 3
+	#people <= 5
+	one r : Room {
+		all p : people | where[maze,p] = r
+		one d : r.doors | DigitalRoot[people.pcode] = d.dcode 
+	}
+}
+
 -- Every player starts at the starting room
 fact Initialization { first.occupies = Player->first.start }
 
@@ -83,8 +93,8 @@ fact AccessibleRooms { Room in first.start.*(doors.destination) }
 -- The starting room and the goal remain the same through maze configurations
 fact SameGoal { all m : Maze | first.start = m.start and first.goal = m.goal }
 
--- Every door set with the same destination has digital root equals to 9
--- fact EveryoneLeaves { all r : Room - first.start { all d : r.entrances { DigitalRoot[d.dcode] = Nine } } }
+-- Every door set has digital root equals to 9
+fact EveryoneLeaves { all r : Room { DigitalRoot[r.doors.dcode] = Nine } }
 
 -- Every door is one of its destination entrances
 fact NoFakeEntrances {	all r : Room { 
@@ -96,6 +106,10 @@ fact NoFakeEntrances {	all r : Room {
 		} 
 	} 
 }
+
+
+-- The maze is a corridor
+fact Corridor { all r : Room - last.goal | one r2 : Room | r.doors.destination = r2 }
 
 
 -- Get player location
@@ -125,26 +139,6 @@ fun DigitalRoot [ids : set Natural] : Natural {
 }
 
 
-pred Transition [m, m' : Maze, to : Room, p : Player] {
-	m'.occupies = m.occupies ++ (p->to)
-}
-
-fun validMove [from, to : Room] : Room->Room {
-	to in from.doors.destination => 
-		from->to
-	else 
-		from->from	
-}
-
-sig Combo { maze : Maze, people : set Player }{
-	#people >= 3
-	#people <= 5
-	one r : Room {
-		all p : people | where[maze,p] = r
-		one d : r.doors | DigitalRoot[people.pcode] = d.dcode 
-	}
-}
-
 fact AllMazesCombo { 
 	all m : Maze | m.occupies != Player->m.goal =>
 		{ some c : Combo | c.maze = m }
@@ -152,33 +146,28 @@ fact AllMazesCombo {
 		{ no c : Combo | c.maze = m }							  
 }
 
---fact { Comb.people = combination[Nine,Player]} 
 
---fun combination [ RED : Natural, players : some Player] : some Player {
---	{ p : players |  DigitalRoot[p.pcode] = RED }
---}
+pred Transition [m, m' : Maze, to : Room, p : Player] {
+	m'.occupies = m.occupies ++ (p->to)
+}
 
+pred AdmissionExam [m, m' : Maze] {	
+	some r : Room - m.goal {
+		some d : r.doors {
+			some c : Combo {
+				c.maze = m
+				where[m,c.people] = r
+				Transition[m,m',d.destination,c.people]
+			}
+		}
+	}
+}
 
---pred AdmissionExam [m, m' : Maze] {
-		
---	some r : Room - m.goal {
---		one d : r.doors {
---			all p : Player {
---				where[m,p] = r
-				--Transition[m,m',d.destination,combination[d.dcode,p]]
---			}
---		}
---	}
-
---}
-
---fact Movement {
---	all m : Maze - last | one m' : m.next | AdmissionExam[m, m']
---}
+fact Movement { one m : first | one m' : m.next | AdmissionExam[m, m'] }
 
 
 
---assert Valid { last.goal.occupants != Player }
+assert Valid { last.occupies = Player->last.goal }
 
 pred AllStart { first.occupies = Player->first.start }
 
