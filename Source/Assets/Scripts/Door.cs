@@ -14,7 +14,7 @@ public class Door : MonoBehaviour {
     DoorState _state = DoorState.LOCKED;
 
     GameController _gc;
-
+    
     [SerializeField]
     IDoorOpeningRule _rule;
     public IDoorOpeningRule Rule

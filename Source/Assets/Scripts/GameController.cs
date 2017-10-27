@@ -64,7 +64,7 @@ public class GameController : MonoBehaviour {
     {
         foreach (Player p in _selectedPlayers)
         {
-            p.OnTouch();
+            p.ChangeState(Player.PlayerState.UNSELECTED);
         }
         _selectedPlayers.Clear();
     }
@@ -94,17 +94,19 @@ public class GameController : MonoBehaviour {
 
                 // Door activated
                 Door door = hit.GetComponent<Door>();
-                door.OnTouch();
+                
 
                 bool doorUnlock = door.UnlockDoor(_selectedPlayers);
                 if (doorUnlock)
                 {
-
                     door.Origin.RemovePlayers(_selectedPlayers);
                     door.Destination.AddPlayers(_selectedPlayers);
 
                     ClearPlayerSelection();
+                    
                 }
+
+                door.OnTouch();
             }
         }
     }
