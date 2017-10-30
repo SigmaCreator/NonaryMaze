@@ -41,8 +41,8 @@ public class DummyMazeFactory : IMazeFactory
         #region Initializes Rooms
         Room start = GameObject.Instantiate(roomPrefab).GetComponent<Room>();
         Room goal = GameObject.Instantiate(roomPrefab).GetComponent<Room>();
-        start.name = "RoomStart";
-        goal.name = "RoomGoal";
+        start.name = "StartRoom";
+        goal.name = "GoalRoom";
 
         start.gameObject.transform.position = new Vector3(0f, -4f , 0f);
 

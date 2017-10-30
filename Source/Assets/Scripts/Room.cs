@@ -78,6 +78,12 @@ public class Room : MonoBehaviour {
     {
         _occupants.AddRange(selection);
         SettlePlayers();
+
+        if(this.name == "GoalRoom" && _occupants.Count == 9)
+        {
+            transform.GetComponent<ParticleSystem>().Play();
+        }
+
         return true;
     }
 
@@ -96,13 +102,12 @@ public class Room : MonoBehaviour {
 
     // Settles players inside the room.
     // Positions them in a way they fit comfortably
-    public void SettlePlayers() {
-
-
-        for (int i = 0; i < _occupants.Count; i++) {
+    public void SettlePlayers()
+    {
+        for (int i = 0; i < _occupants.Count; i++)
+        {
             _occupants[i].transform.position = _playerAnchors[i] + _transform.position;
         }
-
     }
 
     // Settles doors that lead out of the room

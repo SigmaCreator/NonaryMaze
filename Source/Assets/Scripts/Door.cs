@@ -50,15 +50,37 @@ public class Door : MonoBehaviour {
     Collider2D _collider;
     Vector3 _position;
 
-    // Use this for initialization
+
+    
+    //Just an auxiliary variable to do a simple animation on click.
+    // not the best design.
+    float _shakeTime = 0f;
+    
+        // Use this for initialization
     public void Start () {
         _position = gameObject.transform.position;
 	}
 	
 	// Update is called once per frame
 	public void Update () {
-		
+
+        if (_shakeTime > 0f){
+
+            transform.position = _position + Vector3.right* (Mathf.Sin(_shakeTime * 50))/6f;
+
+            _shakeTime -= Time.deltaTime;
+            if(_shakeTime <= 0f)
+            {
+                transform.position = _position;
+            }
+        }
+
 	}
+
+    private void ShakeABit()
+    {
+        _shakeTime = 0.3f;
+    }
 
     private void DoorAnimation(DoorState animation_state) {
 
@@ -66,6 +88,7 @@ public class Door : MonoBehaviour {
         switch (animation_state)
         {
             case DoorState.LOCKED:
+                ShakeABit();
                 break;
             case DoorState.UNLOCKED:
                 break;
