@@ -59,7 +59,10 @@ public class Room : MonoBehaviour {
             yield return p;
         }
     }
-
+    public bool PlayerInRoom(Player p)
+    {
+        return _occupants.Contains(p);
+    }
     public bool RemovePlayers(List<Player> selection) {
 
         foreach (Player p in selection) {

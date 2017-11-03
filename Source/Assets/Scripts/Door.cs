@@ -108,6 +108,13 @@ public class Door : MonoBehaviour {
     }
 
     public bool UnlockDoor(List<Player> selection) {
+        foreach(Player p in selection)
+        {
+            if (!_origin.PlayerInRoom(p))
+            {
+                return false;
+            }
+        }
         bool unlock = _rule.VerifyCode(selection, _doorCode);
         if (unlock) { _state = DoorState.UNLOCKED; }
         return unlock;
