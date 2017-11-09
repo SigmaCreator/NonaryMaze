@@ -1,0 +1,42 @@
+Seja DR(x)  a função que determina a raíz digital de x.
+
+Assumindo as propriedades da raíz digital:
+    DR(a+b) = DR( DR(a) + DR(b))                (1)
+    
+    DR(a-b) congruent DR(a) - DR(b) (Mod 9)     (2)
+ 
+    DR(n) = 9 <=> n = 9 * m                     (3)
+
+    DR(n) = n, se n \e {0,1,2,3,4,5,6,7,8,9} (12)
+
+Em um labirinto composto por salas conectadas em que:
+- Cada sala somente leva a uma sala.            (4)
+- O labirinto não possui ciclos.                (5)
+- Cada sala possui d portas.                    (6)
+- Cada porta do labirinto possui somente um dcode invariável.   (7)
+- Os jogadores todos começam na primeira sala, ou seja, a sala que não é destino de nenhuma outra. (sem portas de entrada). (8)
+- O labirinto possui 9 jogadores.               (9)
+- Cada jogador possui do labirinto possui somente um pcode invariável e exclusivo a este jogador.   (10)
+- pcodes e dcodes \e em {1,2,3,4,5,6,7,8,9}     (11)
+- Somente grupos de 3 a 5 jogadores contidos em uma mesma sala podem atravessar alguma porta.       (13)
+- Um grupo P de jogadores somente atravessa uma porta D caso DR(sum(P.pcode)) = DR(d.dcode)         (14)
+- Um labirinto é dito possível somente se todos os jogadores puderem chegar a ultima sala.          (15)
+
+Precisamos mostrar que, caso cada sala do labirinto tenha portas para as quais os pcodes somam 9, então o labirinto é sempre possível.
+H = (\all r in Room. sum(r.doors) = 9 ) => possível(labirinto)
+
+Para isto, mostramos que caso os pcodes das portas de uma sala r arbitrária somem 9, então todos os jogadores conseguem avançar de sala.
+
+Todos os jogadores conseguem avançar de sala r, quando existe um conjunto de conjuntos de Player complementares e disjuntos, que todos os conjuntos respeitem as propriedades 13 e 14 para a sala r.
+
+Assumindo que todas as portas da sala somem 9, precisamos mostrar que existe um conjunto G de conjuntos de Player complementares e disjuntos, que todos os conjuntos respeitem as propriedades 13 e 14 para a sala r.
+
+Precisamos mostrar que DR(sum(r.players.pcode)) = DR(sum(DR(G.Players.pcode))) [ escrever isso melhor. é a soma de todas as DRs dos conjuntos em G pela propriedade (1)]
+
+... continua no proximo episódio.
+
+
+
+
+
+Por indução, mostramos que o labirinto é possível.
