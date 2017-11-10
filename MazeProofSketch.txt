@@ -12,7 +12,7 @@ Assumindo as propriedades da raíz digital:
 Em um labirinto composto por salas conectadas em que:
 - Cada sala somente leva a uma sala.            (4)
 - O labirinto não possui ciclos.                (5)
-- Cada sala possui d portas.                    (6)
+- Cada sala possui d portas com dcodes distintos.                    (6)
 - Cada porta do labirinto possui somente um dcode invariável.   (7)
 - Os jogadores todos começam na primeira sala, ou seja, a sala que não é destino de nenhuma outra. (sem portas de entrada). (8)
 - O labirinto possui 9 jogadores.               (9)
