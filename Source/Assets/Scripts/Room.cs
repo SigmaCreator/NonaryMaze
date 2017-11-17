@@ -94,12 +94,6 @@ public class Room : MonoBehaviour {
         _doors.Clear();  
         _doors.AddRange(doors);
 
-        //TODO Should Rooms be responsible for setting the origin of doors?
-        // Problably not. How should the factory do this?
-        foreach (Door d in doors) {
-            d.Origin = this;
-        }
-
         SettleDoors();
     }
 

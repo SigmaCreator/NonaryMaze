@@ -41,7 +41,7 @@ public class GameController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        factory = new DummyMazeFactory();
+        factory = new ProceduralMazeFactory();
         maze = factory.GenerateMaze();
 	}
 

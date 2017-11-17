@@ -18,13 +18,20 @@ public class DigitalRootRule : ScriptableObject, IDoorOpeningRule
     // Digital Root rule
     public bool VerifyCode(List<Player> selection, int doorCode)
     {
+        int pHash = DigitalRoot(selection);
+
+        return pHash == doorCode && 
+               (_compositeRule != null ? _compositeRule.VerifyCode(selection, doorCode) : true);
+
+    }
+
+    private int DigitalRoot(List<Player> selection)
+    {
         int pHash = 0;
         foreach (Player p in selection) { pHash += p.Code; }
         pHash %= 9;
         pHash = pHash == 0 ? 9 : pHash;
 
-        return pHash == doorCode && 
-               (_compositeRule != null ? _compositeRule.VerifyCode(selection, doorCode) : true);
-
+        return pHash;
     }
 }
